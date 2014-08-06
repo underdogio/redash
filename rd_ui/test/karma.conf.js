@@ -74,9 +74,11 @@ module.exports = function(config) {
       'app/scripts/directives/query_directives.js',
       'app/scripts/directives/dashboard_directives.js',
       'app/scripts/filters.js',
+      'app/scripts/vendor/**/*.js',
 
       'test/mocks/*.js',
-      'test/unit/*.js'
+      'test/unit/*.js',
+      'test/vendor/*.js'
     ],
 
     // list of files / patterns to exclude

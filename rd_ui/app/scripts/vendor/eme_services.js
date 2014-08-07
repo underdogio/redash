@@ -6,6 +6,36 @@
 
     var DELIMITER = '.';
 
+    function isObject(value) {
+      return Object.prototype.toString.call(value) === "[object Object]";
+    }
+
+    // {foo: {bar: [1,2,3]}} -> {foo.bar: [1,2,3]}
+    function flatten(nestedObject, parentKey) {
+      var obj = {};
+      var keys = Object.keys(nestedObject);
+
+      keys.reduce(function(previous, current) {
+        var value = nestedObject[current];
+        if (isObject(value)) {
+
+
+        }
+      }, obj);
+
+
+      angular.forEach(Object.keys(nestedObject), function(key) {
+        var value = nestedObject[key];
+        if (isObject(value)) {
+          return flatten(value, key);
+        } else {
+          return value;
+        }
+
+      });
+    }
+
+
     function buildObject(keyArray, val) {
       if (keyArray.length) {
         var obj = {};
@@ -35,23 +65,45 @@
     }
 
     return {
+      buildObject: buildObject,
+
       /**
        * recursive function to transform object into url params
        */
-      serialize: function(input, parent, parentPrefix, normalized) {
+      flatten: function(input, parent, parentPrefix, normalized) {
         var normalizedData = normalized || {};
         var prefix = parent ? parent + DELIMITER : '';
 
         prefix = parentPrefix ? parentPrefix + prefix : prefix;
 
         for (var i in input) {
-          if (angular.isObject(input[i])) {
-            normalizedData = this.serialize(input[i], i, prefix, normalizedData);
+          if (isObject(input[i])) {
+            normalizedData = this.flatten(input[i], i, prefix, normalizedData);
           } else {
-            normalizedData[prefix + i] = input[i].toString();
+            normalizedData[prefix + i] = input[i];
           }
         }
         return normalizedData;
+      },
+
+      // key: [1,2,3]
+      // return key[]=1&key[]=2&key[]=3
+      encodeArray: function(key, array) {
+        var result = [];
+        _.each(array, function(val) {
+          result.push(key + '[]=' + val);
+        });
+
+        return result.join('&');
+      },
+
+      toUrl: function(object) {
+        var flat = flatten(object);
+        _.each(flat, function(val, key) {
+          if (_.isArray(val)) {
+            flat[key] = encodeArray(val);
+          }
+        });
       },
 
       /**

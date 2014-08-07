@@ -24,6 +24,61 @@ describe('URLService', function() {
     'key3.key3b': 'value3b'
   };
 
+  describe('flatten', function() {
+    it('should handle numeric values', function() {
+      var object = URLService.flatten({
+        key1: {
+          key2: 1
+        }
+      });
+      expect(object).toEqual({
+        'key1.key2': 1
+      });
+    });
+
+    it('should handle array value', function() {
+      var object = URLService.flatten({
+        key1: {
+          key2: [1,2,3]
+        }
+      });
+      expect(object).toEqual({
+        'key1.key2': [1,2,3]
+      });
+    });
+
+    it('should handle string value', function() {
+      var object = URLService.flatten({
+        key1: {
+          key2: 's'
+        }
+      });
+      expect(object).toEqual({
+        'key1.key2': 's'
+      });
+    });
+
+    it('should handle function value', function() {
+      function f() {};
+      var object = URLService.flatten({
+        key1: {
+          key2: f
+        }
+      });
+      expect(object).toEqual({
+        'key1.key2': f
+      });
+    });
+  });
+
+  ddescribe('encodeArray', function() {
+    it('should encode arrays', function() {
+      var result = URLService.encodeArray('numbers', [1,2,3]);
+      var expected = 'numbers[]=1&numbers[]=2&numbers[]=3';
+      expect(result).toEqual(expected);
+    });
+  });
+
   describe('serialize', function() {
     var serialized;
 

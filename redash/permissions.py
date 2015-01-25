@@ -10,7 +10,10 @@ class require_permissions(object):
     def __call__(self, fn):
         @functools.wraps(fn)
         def decorated(*args, **kwargs):
-            has_permissions = current_user.has_permissions(self.permissions)
+            has_permissions = reduce(lambda a, b: a and b,
+                                      map(lambda permission: permission in current_user.permissions,
+                                          self.permissions),
+                                      True)
 
             if has_permissions:
                 return fn(*args, **kwargs)

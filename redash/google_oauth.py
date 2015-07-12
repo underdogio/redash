@@ -26,6 +26,9 @@ google = oauth.remote_app('google',
                           consumer_key=settings.GOOGLE_CLIENT_ID,
                           consumer_secret=settings.GOOGLE_CLIENT_SECRET)
 
+if len(settings.GOOGLE_APPS_DOMAIN) == 1:
+    google.request_token_params['hd'] = list(settings.GOOGLE_APPS_DOMAIN)[0]
+
 
 blueprint = Blueprint('google_oauth', __name__)
 
